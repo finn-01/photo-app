@@ -1,13 +1,7 @@
 import { useState, useEffect } from "react";
 import { projectStorage, projectFirestore } from "../firebase/config";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import {
-	collection,
-	doc,
-	setDoc,
-	addDoc,
-	serverTimestamp,
-} from "firebase/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const useStorage = (file) => {
 	const [progress, setProgress] = useState(0);
