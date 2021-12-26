@@ -6,7 +6,7 @@ import UploadForm from "./comps/UploadForm";
 
 function App() {
 	const [selectedImg, setSelectedImg] = useState(null);
-	console.log(selectedImg);
+	//console.log(selectedImg);
 
 	return (
 		<div className="App">

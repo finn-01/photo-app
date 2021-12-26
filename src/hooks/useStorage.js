@@ -10,9 +10,9 @@ const useStorage = (file) => {
 
 	useEffect(() => {
 		// create reference
-		console.log(projectStorage);
+		//console.log(projectStorage);
 		const storageRef = ref(projectStorage, file.name);
-		console.log(storageRef);
+		//console.log(storageRef);
 
 		const collectionRef = collection(projectFirestore, "images");
 
@@ -23,7 +23,7 @@ const useStorage = (file) => {
 			(snapshot) => {
 				let percentage =
 					(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-				console.log("Upload is " + percentage + "% done");
+				//console.log("Upload is " + percentage + "% done");
 				setProgress(percentage);
 			},
 			(err) => {
@@ -33,7 +33,7 @@ const useStorage = (file) => {
 				const createAt = serverTimestamp();
 
 				getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-					console.log("URL: " + url);
+					//console.log("URL: " + url);
 					addDoc(collectionRef, {
 						createAt,
 						url: url,
