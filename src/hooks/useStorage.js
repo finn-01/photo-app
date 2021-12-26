@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
-import { async } from "../../../crud-react-firebase/node_modules/@firebase/util/dist/src/subscribe";
-import { projectStorage } from "../firebase/config";
+import { projectStorage, projectFirestore } from "../firebase/config";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import {
+	collection,
+	doc,
+	setDoc,
+	addDoc,
+	serverTimestamp,
+} from "firebase/firestore";
 
 const useStorage = (file) => {
 	const [progress, setProgress] = useState(0);
@@ -8,20 +15,37 @@ const useStorage = (file) => {
 	const [url, setUrl] = useState(null);
 
 	useEffect(() => {
-		const storageRef = projectStorage.ref(file.name);
+		// create reference
+		console.log(projectStorage);
+		const storageRef = ref(projectStorage, file.name);
+		console.log(storageRef);
 
-		storageRef.put(file).on(
+		const collectionRef = collection(projectFirestore, "images");
+
+		const uploadTask = uploadBytesResumable(storageRef, file);
+
+		uploadTask.on(
 			"state_changed",
-			(snap) => {
-				let percentage = (snap.bytesTransferred / snap.totalBytes) * 100;
+			(snapshot) => {
+				let percentage =
+					(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+				console.log("Upload is " + percentage + "% done");
 				setProgress(percentage);
 			},
 			(err) => {
 				setError(err);
 			},
-			async () => {
-				const url = await storageRef.getDownloadURL();
-				setUrl(url);
+			() => {
+				const createAt = serverTimestamp();
+
+				getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+					console.log("URL: " + url);
+					addDoc(collectionRef, {
+						createAt,
+						url: url,
+					});
+					setUrl(url);
+				});
 			}
 		);
 	}, [file]);
